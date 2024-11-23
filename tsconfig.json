@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "allowImportingTsExtensions": true,
+        "noEmit": true,
+        "moduleResolution": "nodenext",
+        "module": "nodenext",
+        "resolveJsonModule": true
+    }
+}
