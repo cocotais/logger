@@ -43,4 +43,4 @@ class Logger {
 }
 
 export { Logger }
-export default (name?: string, loglevel?: string) => new Logger(name, loglevel)
+export default new Logger()
