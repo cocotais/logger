@@ -34,49 +34,6 @@ import { Logger } from '@cocotais/logger'
 const logger = new Logger('MyLogger')
 logger.info('Hello World!')
 ```
-
-## 🧪 参考
-
-### class Logger
-
-#### constructor(name, loglevel)
-
-- **name**: `string` - 日志实例的名称。
-- **loglevel**: `string` - 日志实例的日志级别。
-
-#### name
-
-日志实例的名称。
-
-#### loglevel
-
-日志实例的日志级别。
-
-可以设置为：`debug`, `info`, `notice`, `warn`, `error`, `fatal`。
-
-#### debug(...message)
-
-- **message**: `any[]` - 日志消息。
-
-#### info(...message)
-
-- **message**: `any[]` - 日志消息。
-
-#### notice(...message)
-
-- **message**: `any[]` - 日志消息。
-
-#### warn(...message)
-
-- **message**: `any[]` - 日志消息。
-
-#### error(...message)
-
-- **message**: `any[]` - 日志消息。
-
-#### fatal(...message)
-
-- **message**: `any[]` - 日志消息。
 ---
 
 #### 📝 许可证
