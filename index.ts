@@ -1,20 +1,27 @@
 import kleur from "kleur";
 
+type LogLevel = 'trace' | 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'silent';
+
 class Logger {
     public name: string;
-    public loglevel: string;
-    private loglevelMap: Record<string, number> = {
-        debug: 0,
-        info: 1,
-        notice: 2,
-        warn: 3,
-        error: 4,
-        fatal: 5
+    public loglevel: LogLevel;
+    private loglevelMap: Record<LogLevel, number> = {
+        trace: 0,
+        debug: 1,
+        info: 2,
+        notice: 3,
+        warn: 4,
+        error: 5,
+        silent: 6
     }
 
-    constructor(name?: string, loglevel?: string) {
+    constructor(name?: string, loglevel?: LogLevel) {
         this.name = name ?? 'logger';
-        this.loglevel = loglevel ?? 'info';
+        this.loglevel = loglevel ?? 'debug';
+    }
+    trace(...args: any[]) {
+        if (this.loglevelMap[this.loglevel] > this.loglevelMap['trace']) return;
+        console.log(this.name, kleur.gray('[TRACE]'), ...args)
     }
     debug(...args: any[]) {
         if (this.loglevelMap[this.loglevel] > this.loglevelMap['debug']) return;
@@ -35,10 +42,6 @@ class Logger {
     error(...args: any[]) {
         if (this.loglevelMap[this.loglevel] > this.loglevelMap['error']) return;
         console.error(this.name, kleur.red('[ERROR]'), ...args)
-    }
-    fatal(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['fatal']) return;
-        console.error(this.name, kleur.bgRed('[FATAL]'), ...args)
     }
 }
 
