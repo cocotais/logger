@@ -26,7 +26,7 @@ class Logger {
 
     constructor(name?: string, loglevel?: LogLevel) {
         this.name = name ?? 'logger';
-        this.loglevel = loglevel ?? 'debug';
+        this.loglevel = loglevel ?? 'info';
     }
 
     private log(level: LogLevel, ...args: any[]) {
