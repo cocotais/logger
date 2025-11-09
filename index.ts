@@ -14,34 +14,43 @@ class Logger {
         error: 5,
         silent: 6
     }
+    private logColorMap: Record<LogLevel, kleur.Color> = {
+        trace: kleur.gray,
+        debug: kleur.gray,
+        info: kleur.blue,
+        notice: kleur.blue,
+        warn: kleur.yellow,
+        error: kleur.red,
+        silent: kleur.gray
+    }
 
     constructor(name?: string, loglevel?: LogLevel) {
         this.name = name ?? 'logger';
         this.loglevel = loglevel ?? 'debug';
     }
+
+    private log(level: LogLevel, ...args: any[]) {
+        if (this.loglevelMap[this.loglevel] > this.loglevelMap[level]) return;
+        console.log(this.name, this.logColorMap[level](`[${level.toUpperCase()}]`), ...args)
+    }
+
     trace(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['trace']) return;
-        console.log(this.name, kleur.gray('[TRACE]'), ...args)
+        this.log('trace', ...args)
     }
     debug(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['debug']) return;
-        console.log(this.name, kleur.gray('[DEBUG]'), ...args)
+        this.log('debug', ...args)
     }
     info(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['info']) return;
-        console.log(this.name, '[INFO]', ...args)
+        this.log('info', ...args)
     }
     notice(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['notice']) return;
-        console.log(this.name, kleur.blue('[NOTICE]'), ...args)
+        this.log('notice', ...args)
     }
     warn(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['warn']) return;
-        console.warn(this.name, kleur.yellow('[WARN]'), ...args)
+        this.log('warn', ...args)
     }
     error(...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap['error']) return;
-        console.error(this.name, kleur.red('[ERROR]'), ...args)
+        this.log('error', ...args)
     }
 }
 
