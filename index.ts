@@ -31,7 +31,7 @@ class Logger {
 
     private log(level: LogLevel, ...args: any[]) {
         if (this.loglevelMap[this.loglevel] > this.loglevelMap[level]) return;
-        console.log(this.name, this.logColorMap[level](`[${level.toUpperCase()}]`), ...args)
+        console.log(this.logColorMap[level](`[${level.toUpperCase().at(0)}]`), kleur.bold(this.name), ...args)
     }
 
     trace(...args: any[]) {
