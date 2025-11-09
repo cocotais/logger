@@ -5,7 +5,7 @@ type LogLevel = 'trace' | 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'sile
 class Logger {
     public name: string;
     public loglevel: LogLevel;
-    private loglevelMap: Record<LogLevel, number> = {
+    protected loglevelMap: Record<LogLevel, number> = {
         trace: 0,
         debug: 1,
         info: 2,
@@ -14,7 +14,7 @@ class Logger {
         error: 5,
         silent: 6
     }
-    private logColorMap: Record<LogLevel, kleur.Color> = {
+    protected logColorMap: Record<LogLevel, kleur.Color> = {
         trace: kleur.gray,
         debug: kleur.gray,
         info: kleur.blue,
@@ -29,7 +29,7 @@ class Logger {
         this.loglevel = loglevel ?? 'info';
     }
 
-    private log(level: LogLevel, ...args: any[]) {
+    protected log(level: LogLevel, ...args: any[]) {
         if (this.loglevelMap[this.loglevel] > this.loglevelMap[level]) return;
         console.log(this.logColorMap[level](`[${level.toUpperCase().at(0)}]`), kleur.bold(this.name), ...args)
     }
