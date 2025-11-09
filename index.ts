@@ -1,10 +1,18 @@
 import kleur from "kleur";
+import utils from "node:util";
+import fs from "node:fs";
 
 type LogLevel = 'trace' | 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'silent';
+type LogOptions = {
+    toConsole?: boolean;
+    toFile?: false | string;
+    hasDate?: boolean;
+}
 
 class Logger {
     public name: string;
     public loglevel: LogLevel;
+    public options: LogOptions;
     protected loglevelMap: Record<LogLevel, number> = {
         trace: 0,
         debug: 1,
@@ -24,14 +32,38 @@ class Logger {
         silent: kleur.gray
     }
 
-    constructor(name?: string, loglevel?: LogLevel) {
+    constructor(name?: string, loglevel?: LogLevel, options?: LogOptions) {
         this.name = name ?? 'logger';
         this.loglevel = loglevel ?? 'info';
+        this.options = options ?? {
+            toConsole: true,
+            toFile: false,
+            hasDate: false
+        }
     }
 
     protected log(level: LogLevel, ...args: any[]) {
         if (this.loglevelMap[this.loglevel] > this.loglevelMap[level]) return;
-        console.log(this.logColorMap[level](`[${level.toUpperCase().at(0)}]`), kleur.bold(this.name), ...args)
+
+        let messages = []
+        messages.push(this.logColorMap[level](`[${level.toUpperCase().at(0)}]`))
+
+        if (this.options.hasDate) {
+            messages.push(kleur.gray(new Date().toISOString()))
+        }
+
+        messages.push(kleur.bold(this.name))
+
+        messages.push(...args);
+        let message = utils.formatWithOptions({ colors: true }, ...messages);
+
+        if (this.options.toConsole) {
+            console.log(message)
+        }
+        if (this.options.toFile) {
+            const fileMessage = message.replace(/\u001b\[[0-9;]*m/g, '') + '\n';
+            fs.appendFileSync(this.options.toFile, fileMessage)
+        }
     }
 
     trace(...args: any[]) {
