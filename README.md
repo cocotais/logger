@@ -34,6 +34,9 @@ import { Logger } from '@cocotais/logger'
 const logger = new Logger('MyLogger')
 logger.info('Hello World!')
 ```
+
+我们提供了 TypeScript 类型，在使用时将会自动获得类型提示。
+
 ---
 
 #### 📝 许可证
