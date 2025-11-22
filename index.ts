@@ -48,6 +48,54 @@ const loglevelMap: Record<LogLevel, number> = {
     silent: 6
 }
 
+/**
+ * 记录日志
+ * @param name 日志名称
+ * @param level 日志级别
+ * @param config 日志配置（部分选项）
+ * @param args 日志内容
+ */
+function log(name: string, level: LogLevel, config: Partial<LogOptions>, ...args: any[]) {
+    const options: LogOptions = {
+        loglevel: 'info',
+        toConsole: true,
+        toFile: false,
+        hasDate: false,
+        logColorMap: {
+            trace: kleur.gray,
+            debug: kleur.gray,
+            info: kleur.blue,
+            notice: kleur.blue,
+            warn: kleur.yellow,
+            error: kleur.red,
+            silent: kleur.gray
+        },
+        ...config
+    }
+
+    if (loglevelMap[options.loglevel] > loglevelMap[level]) return;
+
+    let messages = []
+    messages.push(options.logColorMap[level](`[${level.toUpperCase().at(0)}]`))
+
+    if (options.hasDate) {
+        messages.push(kleur.gray(new Date().toISOString()))
+    }
+
+    messages.push(kleur.bold(name))
+
+    messages.push(...args);
+    let message = utils.formatWithOptions({ colors: true }, ...messages);
+
+    if (options.toConsole) {
+        console.log(message)
+    }
+    if (options.toFile) {
+        const fileMessage = message.replace(/\u001b\[[0-9;]*m/g, '') + '\n';
+        fs.appendFileSync(options.toFile, fileMessage)
+    }
+}
+
 class Logger {
     /**
      * 日志名称
@@ -90,27 +138,7 @@ class Logger {
      * @protected
      */
     protected log(level: LogLevel, ...args: any[]) {
-        if (loglevelMap[this.options.loglevel] > loglevelMap[level]) return;
-
-        let messages = []
-        messages.push(this.options.logColorMap[level](`[${level.toUpperCase().at(0)}]`))
-
-        if (this.options.hasDate) {
-            messages.push(kleur.gray(new Date().toISOString()))
-        }
-
-        messages.push(kleur.bold(this.name))
-
-        messages.push(...args);
-        let message = utils.formatWithOptions({ colors: true }, ...messages);
-
-        if (this.options.toConsole) {
-            console.log(message)
-        }
-        if (this.options.toFile) {
-            const fileMessage = message.replace(/\u001b\[[0-9;]*m/g, '') + '\n';
-            fs.appendFileSync(this.options.toFile, fileMessage)
-        }
+        log(this.name, level, this.options, ...args)
     }
 
     trace(...args: any[]) {
@@ -134,4 +162,4 @@ class Logger {
 }
 
 export { Logger }
-export default new Logger()
+export default log;
