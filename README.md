@@ -24,7 +24,7 @@ npm install @cocotais/logger
 
 ```ts
 import logger from '@cocotais/logger'
-logger.info('Hello World!')
+logger('logger', 'info', { hasDate: true }, 'Hello World!')
 ```
 
 或者可以导入 `Logger` 类，创建新的日志实例：
