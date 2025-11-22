@@ -141,6 +141,17 @@ class Logger {
         log(this.name, level, this.options, ...args)
     }
 
+    /**
+     * 设置日志选项
+     * @param options 日志选项
+     */
+    setOptions(options: Partial<LogOptions>) {
+        this.options = {
+            ...this.options,
+            ...options
+        }
+    }
+
     trace(...args: any[]) {
         this.log('trace', ...args)
     }
