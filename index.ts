@@ -76,10 +76,11 @@ class Logger {
     constructor(name?: string, loglevel?: LogLevel, options?: LogOptions) {
         this.name = name ?? 'logger';
         this.loglevel = loglevel ?? 'info';
-        this.options = options ?? {
+        this.options = {
             toConsole: true,
             toFile: false,
-            hasDate: false
+            hasDate: false,
+            ...options
         }
     }
 
