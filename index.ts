@@ -6,25 +6,46 @@ import fs from "node:fs";
  * 所有支持的日志级别
  */
 type LogLevel = 'trace' | 'debug' | 'info' | 'notice' | 'warn' | 'error' | 'silent';
+
 /**
  * 日志选项
  */
 type LogOptions = {
     /**
+     * 日志等级，默认 info
+     */
+    loglevel: LogLevel;
+    /**
      * 是否输出到控制台
      */
-    toConsole?: boolean;
+    toConsole: boolean;
     /**
      * 是否输出到文件
      * 
      * 如果为 false，则不输出到文件；
      * 如果为 string，则输出到文件，文件路径为 string
      */
-    toFile?: false | string;
+    toFile: false | string;
     /**
      * 是否输出日期
      */
-    hasDate?: boolean;
+    hasDate: boolean;
+    /**
+     * 日志颜色映射
+     * 
+     * 每个日志级别对应一个函数，函数接收一个字符串参数，返回一个着色后的字符串
+     */
+    logColorMap: Record<LogLevel, Function>;
+}
+
+const loglevelMap: Record<LogLevel, number> = {
+    trace: 0,
+    debug: 1,
+    info: 2,
+    notice: 3,
+    warn: 4,
+    error: 5,
+    silent: 6
 }
 
 class Logger {
@@ -33,53 +54,31 @@ class Logger {
      */
     public name: string;
     /**
-     * 日志级别
-     */
-    public loglevel: LogLevel;
-    /**
      * 日志选项
      */
     public options: LogOptions;
-    /**
-     * 日志级别映射
-     */
-    protected loglevelMap: Record<LogLevel, number> = {
-        trace: 0,
-        debug: 1,
-        info: 2,
-        notice: 3,
-        warn: 4,
-        error: 5,
-        silent: 6
-    }
-    /**
-     * 日志颜色映射
-     * 
-     * 每个日志级别对应一个函数，函数接收一个字符串参数，返回一个着色后的字符串
-     */
-    protected logColorMap: Record<LogLevel, Function> = {
-        trace: kleur.gray,
-        debug: kleur.gray,
-        info: kleur.blue,
-        notice: kleur.blue,
-        warn: kleur.yellow,
-        error: kleur.red,
-        silent: kleur.gray
-    }
 
     /**
      * 创建一个日志实例
      * @param name 日志名称
-     * @param loglevel 日志级别
      * @param options 日志选项
      */
-    constructor(name?: string, loglevel?: LogLevel, options?: LogOptions) {
+    constructor(name?: string, options?: Partial<LogOptions>) {
         this.name = name ?? 'logger';
-        this.loglevel = loglevel ?? 'info';
         this.options = {
+            loglevel: 'info',
             toConsole: true,
             toFile: false,
             hasDate: false,
+            logColorMap: {
+                trace: kleur.gray,
+                debug: kleur.gray,
+                info: kleur.blue,
+                notice: kleur.blue,
+                warn: kleur.yellow,
+                error: kleur.red,
+                silent: kleur.gray
+            },
             ...options
         }
     }
@@ -91,10 +90,10 @@ class Logger {
      * @protected
      */
     protected log(level: LogLevel, ...args: any[]) {
-        if (this.loglevelMap[this.loglevel] > this.loglevelMap[level]) return;
+        if (loglevelMap[this.options.loglevel] > loglevelMap[level]) return;
 
         let messages = []
-        messages.push(this.logColorMap[level](`[${level.toUpperCase().at(0)}]`))
+        messages.push(this.options.logColorMap[level](`[${level.toUpperCase().at(0)}]`))
 
         if (this.options.hasDate) {
             messages.push(kleur.gray(new Date().toISOString()))
